@@ -138,7 +138,7 @@ stddev = 0
 
 for i in lst:
         stddev += (i - packet_avg) ** 2
-    stddev = math.sqrt((stddev / len(lst)))
+        stddev = math.sqrt((stddev / len(lst)))
     vars = [str(round(packet_min, 8)), str(round(packet_avg, 8)), str(round(packet_max, 8)),str(round(stdev(stdev_var), 8))]
     return vars
 
