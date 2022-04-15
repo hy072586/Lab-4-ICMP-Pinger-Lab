@@ -5,6 +5,7 @@ import struct
 import time
 import select
 import binascii
+
 # Should use stdev
 
 ICMP_ECHO_REQUEST = 8
@@ -33,7 +34,6 @@ def checksum(string):
     return answer
 
 
-
 def receiveOnePing(mySocket, ID, timeout, destAddr):
     timeLeft = timeout
 
@@ -55,14 +55,14 @@ def receiveOnePing(mySocket, ID, timeout, destAddr):
         icmpType, code, mychecksum, packetID, sequence = struct.unpack("bbHHh", icmpHeader)
 
         if icmpType != 8 and packetID == ID:
-        bytesInDouble = struct.calcsize("d")
+            bytesInDouble = struct.calcsize("d")
         timeSent = struct.unpack("d", recPacket[28:28 + bytesInDouble])[0]
-            return timeReceived - timeSent
+        return timeReceived - timeSent
 
-        # Fill in end
-        timeLeft = timeLeft - howLongInSelect
-        if timeLeft <= 0:
-            return "Request timed out."
+    # Fill in end
+    timeLeft = timeLeft - howLongInSelect
+    if timeLeft <= 0:
+        return "Request timed out."
 
 
 def sendOnePing(mySocket, destAddr, ID):
@@ -84,19 +84,17 @@ def sendOnePing(mySocket, destAddr, ID):
     else:
         myChecksum = htons(myChecksum)
 
-
     header = struct.pack("bbHHh", ICMP_ECHO_REQUEST, 0, myChecksum, ID, 1)
     packet = header + data
 
     mySocket.sendto(packet, (destAddr, 1))  # AF_INET address must be tuple, not str
 
-
     # Both LISTS and TUPLES consist of a number of objects
     # which can be referenced by their position number within the object.
 
+
 def doOnePing(destAddr, timeout):
     icmp = getprotobyname("icmp")
-
 
     # SOCK_RAW is a powerful socket type. For more details:   https://sock-raw.org/papers/sock_raw
     mySocket = socket(AF_INET, SOCK_RAW, icmp)
@@ -109,39 +107,40 @@ def doOnePing(destAddr, timeout):
 
 
 def ping(host, timeout=1):
-    # timeout=1 means: If one second goes by without a reply from the server,  	
+    # timeout=1 means: If one second goes by without a reply from the server,
     # the client assumes that either the client's ping or the server's pong is lost
     dest = gethostbyname(host)
     print("Pinging " + dest + " using Python:")
     print("")
-            
-    #Send ping requests to a server separated by approximately one second
+
+    # Send ping requests to a server separated by approximately one second
     while loop < 10:
+        delay = doOnePing(dest, timeout)
+    print(delay)
+    time.sleep(1)  # sleep one second
+    loop += 1  # for loop-limit
+    return delay
+
+
+# Add something here to collect the delays of each ping in a list so you can calculate vars after your ping
+
+for i in range(0, 4):  # Four pings will be sent (loop runs for i=0, 1, 2, 3)
     delay = doOnePing(dest, timeout)
     print(delay)
-    time.sleep(1) #sleep one second
-    loop += 1 #for loop-limit
-        return delay
-   
-    #Add something here to collect the delays of each ping in a list so you can calculate vars after your ping
+    time.sleep(1)  # one second
 
-    for i in range(0,4): #Four pings will be sent (loop runs for i=0, 1, 2, 3)
-        delay = doOnePing(dest, timeout)
-        print(delay)
-        time.sleep(1)  # one second
-        
-    #You should have the values of delay for each ping here; fill in calculation for packet_min, packet_avg, packet_max, and stdev
+# You should have the values of delay for each ping here; fill in calculation for packet_min, packet_avg, packet_max, and stdev
 
-    packet_min=min(lst)
-    packet_max=max(lst)
-    packet_avg=sum(lst)/len(lst)
-    stddev=0
-  
-    for i in lst:
+packet_min = min(lst)
+packet_max = max(lst)
+packet_avg = sum(lst) / len(lst)
+stddev = 0
+
+for i in lst:
         stddev += (i - packet_avg) ** 2
-        stddev = math.sqrt((stddev / len(lst)))
-        vars = [str(round(packet_min, 8)), str(round(packet_avg, 8)), str(round(packet_max, 8)),str(round(stdev(stdev_var), 8))]
-        return vars
+    stddev = math.sqrt((stddev / len(lst)))
+    vars = [str(round(packet_min, 8)), str(round(packet_avg, 8)), str(round(packet_max, 8)),str(round(stdev(stdev_var), 8))]
+    return vars
 
 if __name__ == '__main__':
     ping("google.co.il")
