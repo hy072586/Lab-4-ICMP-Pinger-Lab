@@ -54,9 +54,9 @@ def receiveOnePing(mySocket, ID, timeout, destAddr):
         icmpHeader = recPacket[20:28]
         icmpType, code, mychecksum, packetID, sequence = struct.unpack("bbHHh", icmpHeader)
 
-        if type != 8 and packetID == ID:
-            bytesInDouble = struct.calcsize("d")
-            timeSent = struct.unpack("d", recPacket[28:28 + bytesInDouble])[0]
+        if icmpType != 8 and packetID == ID:
+        bytesInDouble = struct.calcsize("d")
+        timeSent = struct.unpack("d", recPacket[28:28 + bytesInDouble])[0]
             return timeReceived - timeSent
 
         # Fill in end
@@ -114,23 +114,33 @@ def ping(host, timeout=1):
     dest = gethostbyname(host)
     print("Pinging " + dest + " using Python:")
     print("")
-    
+            
     #Send ping requests to a server separated by approximately one second
+    while loop < 10:
+    delay = doOnePing(dest, timeout)
+    print(delay)
+    time.sleep(1) #sleep one second
+    loop += 1 #for loop-limit
+        return delay
+   
     #Add something here to collect the delays of each ping in a list so you can calculate vars after your ping
-    
+
     for i in range(0,4): #Four pings will be sent (loop runs for i=0, 1, 2, 3)
         delay = doOnePing(dest, timeout)
         print(delay)
         time.sleep(1)  # one second
         
     #You should have the values of delay for each ping here; fill in calculation for packet_min, packet_avg, packet_max, and stdev
-    #vars = [str(round(packet_min, 8)), str(round(packet_avg, 8)), str(round(packet_max, 8)),str(round(stdev(stdev_var), 8))]
 
-    while 1:
-        delay = doOnePing(dest, timeout)
-        print(delay)
-        time.sleep(1)  # one second
-
+    packet_min=min(lst)
+    packet_max=max(lst)
+    packet_avg=sum(lst)/len(lst)
+    stddev=0
+  
+    for i in lst:
+        stddev += (i - packet_avg)**2
+        stddev = math.sqrt((stddev / len(lst)))
+    vars = [str(round(packet_min, 8)), str(round(packet_avg, 8)), str(round(packet_max, 8)),str(round(stdev(stdev_var), 8))]
     return vars
 
 if __name__ == '__main__':
