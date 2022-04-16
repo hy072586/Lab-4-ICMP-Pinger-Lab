@@ -114,7 +114,7 @@ def ping(host, timeout=1):
  
 # Add something here to collect the delays of each ping in a list so you can calculate vars after your ping
     lst = []
-    for i in range(0, 3):  # Four pings will be sent (loop runs for i=0, 1, 2, 3)
+    for i in range(0, 4):  # Four pings will be sent (loop runs for i=0, 1, 2, 3)
         delay = doOnePing(dest, timeout)
         lst.append(delay[i] * 1000, 2)
         print(delay)
