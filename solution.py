@@ -64,7 +64,6 @@ def receiveOnePing(mySocket, ID, timeout, destAddr):
     if timeLeft <= 0:
         return "Request timed out."
 
-
 def sendOnePing(mySocket, destAddr, ID):
     # Header is type (8), code (8), checksum (16), id (16), sequence (16)
 
@@ -92,7 +91,6 @@ def sendOnePing(mySocket, destAddr, ID):
     # Both LISTS and TUPLES consist of a number of objects
     # which can be referenced by their position number within the object.
 
-
 def doOnePing(destAddr, timeout):
     icmp = getprotobyname("icmp")
 
@@ -104,7 +102,6 @@ def doOnePing(destAddr, timeout):
     delay = receiveOnePing(mySocket, myID, timeout, destAddr)
     mySocket.close()
     return delay
-
 
 def ping(host, timeout=1):
     # timeout=1 means: If one second goes by without a reply from the server,
