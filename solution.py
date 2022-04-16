@@ -119,7 +119,7 @@ def ping(host, timeout=1):
     lst = []
     for i in range(0, 4):  # Four pings will be sent (loop runs for i=0, 1, 2, 3)
         delay = doOnePing(dest, timeout)
-        lst.append(round(delay[0] * 1000, 2))
+        lst.append(delay[0] * 1000, 2)
         print(delay)
         time.sleep(1)  # one second
 
